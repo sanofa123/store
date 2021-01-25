@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Storage;
+
 use DB;
 use App\Category;
 use App\Product;
@@ -23,21 +25,33 @@ class ProductController extends Controller
         return view('insertProduct') ->with('categories',Category::all());
     }
     //Category::all() means "select * from category"
-    public function store(){    
-        $r=request(); 
-        $image=$r->file('product-image');        
-        $image->move('images',$image->getClientOriginalName());   
-        //images is the location                
-        $imageName=$image->getClientOriginalName(); 
+    public function store(){
+        
+        $r=request();
+        //dd($r->all()); 
+        ini_set("memory_limit", "100M");
+        ini_set('post_max_size', '50M');
+        ini_set('upload_max_filesize', '50M');
+        $final_path = 'storage/images/default.png';
+        if ($r->hasFile('photo'))
+        {
+            $file = $r->file('photo');
+            $allowedfileExtension = ['jpeg', 'jpg', 'png', 'gif'];
+            $extension = $file->getClientOriginalExtension();
+            $check = in_array($extension, $allowedfileExtension);
+            $filename = $file->getClientOriginalName();
+            $path = Storage::disk('public')->put('images/', $file);
+            $final_path = 'storage/' . $path;
+        }
+        
 
-        $addCategory=Product::create([    
-            'id'=>$r->ID, 
-            'name'=>$r->title,
-            'description'=>$r->Description, 
+        $addProduct=Product::create([    
+            'name'=>$r->name,
+            'description'=>$r->desc, 
             'price'=>$r->price,
-            'image'=>$imageName,                 
+            'image' => $final_path,                 
             'quantity'=>$r->Quantity, 
-            'categoryID'=>$r->category_id,             
+            'categoryID'=>$r->category,             
         ]);
         Session::flash('success',"Product create succesful!");        
         //Return redirect()->route('all.product');
@@ -66,6 +80,7 @@ class ProductController extends Controller
 
     public function edit($id){
        //select * from Products where id='$id'
+       
         $products =Product::all()->where('id',$id);
         
         return view('editProduct')->with('products',$products)
@@ -87,7 +102,8 @@ class ProductController extends Controller
         $products->quantity=$r->Quantity;
         $products->categoryID=$r->category_id;
         $products->save();
-        return redirect()->route('all.product');
+        return redirect()->back();
+        //return redirect()->route('all.product');
     }
 
     public function search(){
@@ -105,7 +121,11 @@ class ProductController extends Controller
     }
 
 
-
+    public function GetProduct(Request $request)
+    {
+        $products=Product::all();
+        return response()->json($products);
+    }
 
     
 }

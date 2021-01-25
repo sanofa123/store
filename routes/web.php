@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +18,9 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/phpinfo', function(){
 //     phpinfo();
 // });
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::get('/cs', function () {
     return view('contact');
@@ -107,10 +110,8 @@ Route::get('/myorder',[
 ]);
 
 
-// route for processing payment
 Route::post('paypal', 'PaymentController@payWithpaypal');
 
-// route for check status of the payment
 Route::get('status', 'PaymentController@getPaymentStatus');
 
 Auth::routes();
@@ -118,7 +119,24 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::post('/update',"ProductController@update") ;
 
-Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::post('store',[ProductController::class, 'store'])->name('store');
+
+Route::post('get_all_products',[ProductController::class, 'GetProduct'] );
+Route::post('categorystore',[CategoryController::class, 'storecategory'])->name('storeCategory');
+Route::post('category-delete',[CategoryController::class, 'deleteCategory'])->name('category-delete');
+
+Route::post('get_about',[AboutController::class, 'GetAbout'] );
+Route::post('about_store',[AboutController::class, 'StoreAbout'] );
+
+Route::get('/lay', [AdminController::class, 'viewApp1'])->name('admin-lay');
+Route::get('/lay2', [AdminController::class, 'viewApp2'])->name('admin-lay2');
+Route::get('/', [AdminController::class, 'viewIndex'])->name('cook-index');
+
+
+Route::group([ 'middleware' => 'auth' ], function () {
+
+Route::get('/admin', [AdminController::class, 'viewAdmin'])->name('admin-panel');
+});

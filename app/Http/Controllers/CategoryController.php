@@ -19,14 +19,23 @@ class CategoryController extends Controller
     //
 
 
-    public function store(){    //create the function for store name should be same with route  
-        $r=request(); //get all data from HTML form
-        $addCategory=Category::create([    //bind data, check the spelling insert into categories values('','','','');
-            'id'=>$r->ID, //bind the variable with field name $_POST['ID']
-            'name'=>$r->name, //same name from database           
+    public function storecategory()
+    {      
+        $r=request(); 
+        $addCategory=Category::create([    
+            'name'=>$r->category, 
         ]);
         
-        return redirect()->route('category');// redirect to the page 'category' same define on route
+        return redirect()->back();
+    }
+
+    public function deleteCategory(Request $request)
+    {
+       $category= Category::findOrFail($request->category);
+       \App\Product::where('categoryID', $category->id)->delete();
+       $category->delete() ;
+
+       return \back();
     }
     
 

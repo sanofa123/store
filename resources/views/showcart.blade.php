@@ -56,12 +56,13 @@ function Cal() {
 						@endphp
 
                         <td>{{$subtotal}}</td>
-						<input type="hidden" value="{{$subtotal}}" name="price[]" id="price[]"/>
+						<input type="" value="{{$subtotal}}" name="price[]" id="price[]"/>
 
 		                <td>
 		                    <a href="" class="btn btn-warning"><i class="fas fa-edit">Edit</i></a> | 
 		                    <a href="{{ route('delete.cart', ['id' => $cart->cid]) }}" 
- 						class="btn btn-danger" onclick="return confirm('Confirm Delete?')">Delete</a>
+						 class="btn btn-danger" onclick="return confirm('Confirm Delete?')">Delete</a>
+						 
 		                </td>
 		            </tr> 
                 @endforeach
@@ -71,7 +72,7 @@ function Cal() {
                 <td>&nbsp;</td>
 		        <td>&nbsp;</td>                   
 		        <td>Total</td>
-		        <td><input type="text" name="amount" id="amount" value="1000"></td>
+		        <td><input type="text" name="amount" id="amount" value=""></td>
                 <td><input type="submit" name="checkout" value="Checkout"></td>
 		    </tr>
 		</form>	
